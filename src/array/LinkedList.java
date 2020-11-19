@@ -45,4 +45,47 @@ public class LinkedList {
         }
         return pre;
     }
+
+
+    /**
+     * #148 排序链表
+     * 给你链表的头结点 head ，请将其按 升序 排列并返回 排序后的链表 。
+     */
+    public ListNode sortList(ListNode head) {
+        // 递归 快慢指针拆分到每两两各自处理
+        if (null == head || null == head.next) {
+            return head;
+        }
+        // 快慢指针各自处理一半
+        ListNode fast = head.next;
+        ListNode slow = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+
+        // 左右各自递归
+        ListNode tmp = slow.next;
+        slow.next = null;
+        ListNode left = sortList(head);
+        ListNode right = sortList(tmp);
+
+        // 最后两个节点组成链表 返回
+        ListNode h = new ListNode(0);
+        ListNode res = h;
+
+        while (left != null && right != null) {
+            if (left.val < right.val) {
+                h.next = left;
+                left = left.next;
+            } else {
+                h.next = right;
+                right = right.next;
+            }
+            h = h.next;
+        }
+        h.next = left != null ? left : right;
+        return res.next;
+    }
+
 }
