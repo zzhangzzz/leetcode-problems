@@ -2,6 +2,7 @@ package array;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,23 @@ public class ListProblem {
         return hold;
     }
 
+
+
+    /**
+     * 回溯模板
+     * result = []
+     * func backTrack(路径， 选择列表）{
+     *     if 满足条件
+     *          result.add
+     *          return
+     *     for 选择 in 列表
+     *           选择
+     *           backTrack
+     *           撤销操作
+     * }
+     */
+
+
     /**
      * #78 子集
      * 给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
@@ -116,4 +134,43 @@ public class ListProblem {
     }
 
 
+    /**
+     * #46 全排列
+     * 给定一个 没有重复 数字的序列，返回其所有可能的全排列。
+     * 输入: [1,2,3]
+     * 输出:
+     * [
+     *   [1,2,3],
+     *   [1,3,2],
+     *   [2,1,3],
+     *   [2,3,1],
+     *   [3,1,2],
+     *   [3,2,1]
+     * ]
+     */
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        ArrayList<Integer> out = new ArrayList<>();
+        for (int num : nums) {
+            out.add(num);
+        }
+        int n = nums.length;
+        permuteBackTrack(n, 0, result, out);
+
+        return result;
+    }
+    private void permuteBackTrack(int n, int nowIndex, List<List<Integer>> result, ArrayList<Integer> out) {
+        if (nowIndex == n) {
+            result.add(new ArrayList<>(out));
+        }
+        for (int i = nowIndex; i < n; i++) {
+            // 互换数组
+            Collections.swap(out, nowIndex, i);
+
+            permuteBackTrack(n, nowIndex + 1, result, out);
+
+            // 撤销 进行回溯
+            Collections.swap(out, nowIndex, i);
+        }
+    }
 }
