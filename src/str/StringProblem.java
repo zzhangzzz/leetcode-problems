@@ -51,4 +51,33 @@ public class StringProblem {
         }
         return Arrays.copyOf(res, i);
     }
+
+
+    /**
+     * 给定一个字符串，你的任务是计算这个字符串中有多少个回文子串。
+     * 输入："abc"
+     * 输出：3
+     * 解释：三个回文子串: "a", "b", "c"
+     *
+     * 输入："aaa"
+     * 输出：6
+     * 解释：6个回文子串: "a", "a", "a", "aa", "aa", "aaa"
+     * @param s
+     * @return
+     */
+    public int countSubstrings(String s) {
+        /**
+         * 从中心点向两边扩展 挨个计算是否是回文串
+         */
+        int length = s.length(), ans = 0;
+        for (int i = 0; i < 2 * length - 1; i++) {
+            int left = i / 2, right = i / 2 + i % 2;
+            while (left >= 0 && right < length && s.charAt(left) == s.charAt(right)) {
+                left--;
+                right++;
+                ans++;
+            }
+        }
+        return ans;
+    }
 }

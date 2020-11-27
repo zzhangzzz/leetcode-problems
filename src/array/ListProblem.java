@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Random;
 
 /**
  * @author zhang.xu
@@ -200,5 +203,101 @@ public class ListProblem {
             hold = Math.max(hold, cash - prices[i]);
         }
         return cash;
+    }
+
+
+    /**
+     * 找到未排序数组第K个最大的数
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int findKthLargest(int[] nums, int k) {
+        if (k == 0 || nums.length == 0) {
+            return 0;
+        }
+
+        Queue<Integer> queue = new PriorityQueue<>((v1, v2) -> v1 - v2);
+        for (int n : nums) {
+            queue.add(n);
+            if (queue.size() > k) {
+                queue.poll();
+            }
+        }
+        return queue.poll();
+    }
+
+    /**
+     * 快排的划分操作，每次都可以确定一个最终元素的位置，如果某次划分结果是k的下标就找到了，否则往左 或者 往右找
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int findK_by_quick_sort(int[] nums, int k) {
+        return quickSelect(nums, 0, nums.length - 1, nums.length - k);
+    }
+
+    private int quickSelect(int[] nums, int left, int right, int index) {
+        int q = randomPartition(nums, left, right);
+        if (q == index) {
+            return nums[q];
+        }
+        return q < index ? quickSelect(nums, q + 1, right, index) : quickSelect(nums, left, q - 1, index);
+    }
+
+    private int randomPartition(int[] nums, int left, int right) {
+        Random random = new Random();
+        int i = random.nextInt(right - left) + 1;
+        swap(nums, i, right);
+        return partition(nums, left, right);
+    }
+
+    private int partition(int[] nums, int left, int right) {
+        int x = nums[right], i = left - 1;
+        for (int j = 1; j < right; j++) {
+            if (nums[j] <= x) {
+                swap(nums, ++i, j);
+            }
+        }
+        swap(nums, i + 1, right);
+        return i + 1;
+    }
+
+    private void swap(int[] nums, int left, int right) {
+        int tmp = nums[left];
+        nums[left] = nums[right];
+        nums[right] = tmp;
+    }
+
+
+    public int find_k_by_heap(int[] nums, int k) {
+        int heapSize = nums.length;
+        buildHeap(nums, heapSize);
+        for (int i = nums.length - 1; i >= nums.length - k + 1; i--) {
+            swap(nums, 0, i);
+            --heapSize;
+            maxHeapify(nums, 0, heapSize);
+        }
+        return nums[0];
+    }
+
+    private void buildHeap(int[] nums, int heapSize) {
+        for (int i = heapSize / 2; i >= 0; i--) {
+            maxHeapify(nums, i, heapSize);
+        }
+    }
+
+    private void maxHeapify(int[] nums, int i, int heapSize) {
+        int left = i * 2 + 1, right = i * 2 + 2, largest = i;
+        if (left < heapSize && nums[left] > nums[largest]) {
+            largest = left;
+        }
+        if (right < heapSize && nums[right] > nums[largest]) {
+            largest = right;
+        }
+        if (largest != i) {
+            swap(nums, i, largest);
+            maxHeapify(nums, largest, heapSize);
+        }
     }
 }
