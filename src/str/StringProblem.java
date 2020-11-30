@@ -80,4 +80,49 @@ public class StringProblem {
         }
         return ans;
     }
+
+
+    /**
+     * #767 重构字符串
+     * 给定一个字符串S，检查是否能重新排布其中的字母，使得两相邻的字符不同。
+     * 输入: S = "aab"
+     * 输出: "aba"
+     * @param S
+     * @return
+     */
+    public String reorganizeString(String S) {
+        if (S.length() < 2) {
+            return S;
+        }
+        int[] counts = new int[26];
+        int max = 0;
+        int length = S.length();
+        for (int i = 0; i < length; i++) {
+            char c = S.charAt(i);
+            counts[c - 'a']++;
+            max = Math.max(max, counts[c - 'a']);
+        }
+        if (max > (length + 1) / 2) {
+            return "";
+        }
+        char[] resArray = new char[length];
+        // 奇数下标 和 偶数下标
+        int evenIndex = 0, oddIndex = 1;
+        int halfLength = length / 2;
+        for (int i = 0; i < 26; i++) {
+            char c = (char) ('a' + i);
+            // 当 n 是奇数且出现最多的字母的出现次数是 (n+1)/2时，出现次数最多的字母必须全部放置在偶数下标，
+            while (counts[i] > 0 && counts[i] <= halfLength && oddIndex < length) {
+                resArray[oddIndex] = c;
+                counts[i]--;
+                oddIndex += 2;
+            }
+            while (counts[i] > 0) {
+                resArray[evenIndex] = c;
+                counts[i]--;
+                evenIndex += 2;
+            }
+        }
+        return new String(resArray);
+    }
 }
