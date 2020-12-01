@@ -2,7 +2,9 @@ package str;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author zhang.xu
@@ -124,5 +126,27 @@ public class StringProblem {
             }
         }
         return new String(resArray);
+    }
+
+
+    /**
+     * # 3 给定一个字符串， 找到不含重复字符的最长子串长度
+     * @param s
+     * @return
+     */
+    public int lengthOfLongestSubstring(String s) {
+        Set<Character> set = new HashSet<>();
+        int max = 0;
+        // 快慢指针i、j 扫描一遍字符串，已在hash集合 则尝试删除
+        for (int i = 0, j = 0; j < s.length(); j++) {
+            while (set.contains(s.charAt(j))) {
+                set.remove(s.charAt(i));
+                i++;
+            }
+            // 更新max
+            set.add(s.charAt(j));
+            max = Math.max(max, set.size());
+        }
+        return max;
     }
 }
