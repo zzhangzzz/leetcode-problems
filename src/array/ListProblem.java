@@ -3,6 +3,7 @@ package array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -329,4 +330,32 @@ public class ListProblem {
         return ans;
     }
 
+
+    /**
+     * #56 给出一个区间的集合，请合并所有重叠的区间。
+     * @param intervals
+     * @return
+     */
+    public int[][] merge(int[][] intervals) {
+        int len = intervals.length;
+        if (len < 2) {
+            return intervals;
+        }
+        // 按首区间排序
+        Arrays.sort(intervals, Comparator.comparingInt(o -> o[0]));
+
+        // 从头到尾遍历一次 可以合并则合并头尾
+        List<int []> res = new ArrayList<>();
+        res.add(intervals[0]);
+        for (int i = 1; i < len; i++) {
+            int[] curr = intervals[i];
+            int[] peek = res.get(res.size() - 1);
+            if (curr[0] > peek[1]) {
+                res.add(curr);
+            } else {
+                peek[1] = Math.max(curr[1], peek[1]);
+            }
+        }
+        return res.toArray(new int[res.size()][]);
+    }
 }
