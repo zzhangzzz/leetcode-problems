@@ -1,8 +1,10 @@
 package str;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -148,5 +150,59 @@ public class StringProblem {
             max = Math.max(max, set.size());
         }
         return max;
+    }
+
+
+    /**
+     * 将数组拆分成斐波那契序列
+     * 输入："123456579"
+     * 输出：[123,456,579]
+     *
+     * 输入: "11235813"
+     * 输出: [1,1,2,3,5,8,13]
+     *
+     * @param S
+     * @return
+     */
+    public List<Integer> splitIntoFibonacci(String S) {
+        List<Integer> res = new ArrayList<>();
+
+        backTrackFb(res, S, S.length(), 0, 0, 0);
+        return res;
+    }
+
+    private boolean backTrackFb(List<Integer> res, String s, int length, int index, int sum, int pre) {
+        if (index == length) {
+            return res.size() >= 3;
+        }
+
+        int curLong = 0;
+        for (int i = index; i < length; i++) {
+            // fb 数列中间不能有0
+            if (i > index && s.charAt(index) == '0') {
+                break;
+            }
+
+            curLong = curLong * 10 + s.charAt(i) - '0';
+            if (curLong > Integer.MAX_VALUE) {
+                break;
+            }
+
+            int cur = (int) curLong;
+            if (res.size() >= 2) {
+                if (cur < sum) {
+                    continue;
+                } else if (cur > sum) {
+                    break;
+                }
+            }
+            res.add(cur);
+            if (backTrackFb(res, s, length, i + 1, cur + pre, cur)) {
+                return true;
+            } else {
+                res.remove(res.size() - 1);
+            }
+        }
+        return false;
     }
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * @author zhang.xu
@@ -357,5 +358,51 @@ public class ListProblem {
             }
         }
         return res.toArray(new int[res.size()][]);
+    }
+
+
+    static class Food {
+        int n;
+
+        public Food(int n) {
+            this.n = n;
+        }
+
+        public int getN() {
+            return n;
+        }
+
+        public void setN(int n) {
+            this.n = n;
+        }
+    }
+
+    public static void main(String[] args) {
+        List<Food> lista = new ArrayList<>();
+        lista.add(new Food(1));
+        lista.add(new Food(2));
+        lista.add(new Food(3));
+
+        List<Food> listb = lista;
+        Food t = listb.get(0);
+        t.setN(55);
+
+        for (Food a : lista) {
+            System.out.println(a.getN());
+        }
+
+        List<Food> listc = new ArrayList<>();
+        listc.addAll(lista);
+        Food t2 = listc.get(0);
+        t2.setN(33);
+        for (Food a : lista) {
+            System.out.println(a.getN());
+        }
+
+        List<Food> listd = lista;
+        listd = listd.stream().limit(2).collect(Collectors.toList());
+        for (Food a : lista) {
+            System.out.println(a.getN());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package concurrency;
 
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -25,67 +26,112 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DinnerRoom {
 
     /**
-     * 阿里笔试题
      * 该饭店有5位厨子，每位厨子做一份菜需要3秒时间
      * 消费者吃一盘菜需要4秒时间
      * 该饭店总计有8个盘子(洗盘子时间忽略不计)
      * 请用程序模拟30人同时就餐的场景
      */
 
+    static class Table extends LinkedList<Object> {
+        int maxSize;
+        public Table(int maxSize) {
+            this.maxSize = maxSize;
+        }
 
+        public synchronized void putFood(Food f) {
+            while (this.size() >= this.maxSize) {
+                try {
+                    System.out.println("wait eat");
+                    wait();
+                } catch (Exception e) {
 
-    volatile private Semaphore cookerSemaphore = new Semaphore(5);
-    private volatile Semaphore eaterSemaphore = new Semaphore(30);
-    private volatile ReentrantLock lock = new ReentrantLock();
-    private volatile Condition addFoodCondition = lock.newCondition();
-    private volatile Condition eatCondition = lock.newCondition();
-    private volatile ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
-
-    private boolean isEmpty() {
-        return queue.isEmpty();
-    }
-
-    private boolean isFull() {
-        return !queue.isEmpty();
-    }
-
-    public void buildFood() {
-        try {
-            cookerSemaphore.acquire();
-            lock.lock();
-            while (isFull()) {
-                addFoodCondition.await();
+                }
             }
-            queue.add(1);
-            eatCondition.signalAll();
-        } catch (Exception e) {
+            this.addLast(f);
+            System.out.println("上菜一份，现在" + this.size());
+            notifyAll();
+        }
 
-        } finally {
-            lock.unlock();
-            cookerSemaphore.release();
+        public synchronized Food eat() {
+            Food f;
+            while (this.size() <= 0) {
+                try {
+                    System.out.println("no food here");
+                    wait();
+                } catch (Exception e) {
+
+                }
+            }
+            f = (Food) this.getFirst();
+            this.remove(f);
+            System.out.println("吃了一份 还有" + this.size());
+            notifyAll();
+            return f;
         }
     }
 
-    public void eat() {
-        try {
-            eaterSemaphore.acquire();
-            lock.lock();
-            while (isEmpty()) {
-                eatCondition.await();
-            }
-            queue.remove();
-            addFoodCondition.signalAll();
-        } catch (Exception e) {
+    static class Cooker implements Runnable {
+        private Table t;
 
-        } finally {
-            lock.unlock();
-            eaterSemaphore.release();
+        public Cooker(Table t) {
+            this.t = t;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                Food f = new Food();
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread().getName() + "做了一份");
+                t.putFood(f);
+            }
         }
     }
+
+    static class Eater implements Runnable {
+        private Table t;
+
+        public Eater(Table t) {
+            this.t = t;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                Food f = t.eat();
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+
+
+    static class Food{}
 
     public static void main(String[] args) {
+        Table t = new Table(8);
+        new Thread(new Cooker(t)).start();
+        new Thread(new Cooker(t)).start();
+        new Thread(new Cooker(t)).start();
+
+        new Thread(new Eater(t)).start();
+        new Thread(new Eater(t)).start();
+        new Thread(new Eater(t)).start();
+        new Thread(new Eater(t)).start();
+        new Thread(new Eater(t)).start();
+        new Thread(new Eater(t)).start();
 
     }
+
 }
 
 
