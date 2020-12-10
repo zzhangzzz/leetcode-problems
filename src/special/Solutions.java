@@ -1,5 +1,8 @@
 package special;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author zhang.xu
  * email nagisaww.zhang@beibei.com
@@ -59,5 +62,49 @@ public class Solutions {
         System.out.println(lemonadeChange(test));
 
     }
+
+
+    /**
+     * 移除所有逗号，小数点和空格，得到一个字符串S。返回所有可能的原始字符串到一个列表中。
+     * 输入: "(123)"
+     * 输出: ["(1, 23)", "(12, 3)", "(1.2, 3)", "(1, 2.3)"]
+     * 输入: "(00011)"
+     * 输出:  ["(0.001, 1)", "(0, 0.011)"]
+     * @param s
+     * @return
+     *
+     * 我们首先把这个二维坐标分成两部分，前一部分表示 x 坐标，后一部分表示 y 坐标。
+     * 例如当给出的二维坐标为 (1234) 时，我们可以把它分成 1, 234，12, 34 和 123, 4 三种情况
+     * 随后对于每一部分，我们再考虑是否可以添加小数点以及在哪里添加小数点。
+     * 例如，对于 123，合法的坐标有 1.23，12.3 和 123。
+     *
+     * 在处理每一部分时，我们需要将出现多余 0 的不合法的坐标去除。
+     * 如果我们不添加小数点，那么这个坐标不能有前导 0；
+     * 如果我们在某个位置添加小数点，那么整数部分不能有前导 0，小数部分的末尾也不能有 0。
+     */
+    public List<String> ambiguousCoordinates(String s) {
+        List<String> res = new ArrayList<>();
+        for (int i = 2; i < s.length() - 1; i++) {
+            for (String left : make(s, 1, i)) {
+                for (String right : make(s, i, s.length() - 1)) {
+                    res.add("(" + left + "," + right + ")");
+                }
+            }
+        }
+        return res;
+    }
+
+    private List<String> make(String s, int i, int j) {
+        List<String> ans = new ArrayList<>();
+        for (int d = 1; d <= j- 1; d++) {
+            String left = s.substring(i, i + d);
+            String right = s.substring(i + d, j);
+            if ((!left.startsWith("0") || "0".equals(left)) && !right.startsWith("0")){
+                ans.add(left + (d < j - i ? "." : "") + right);
+            }
+        }
+        return ans;
+    }
+
 
 }
