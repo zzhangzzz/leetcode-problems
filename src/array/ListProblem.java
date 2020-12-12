@@ -405,4 +405,31 @@ public class ListProblem {
             System.out.println(a.getN());
         }
     }
+
+
+    /**
+     * #376 摆动序列
+     * 如果连续数字之间的差严格地在正数和负数之间交替，则数字序列称为摆动序列
+     * 输入: [1,7,4,9,2,5]
+     * 输出: 6
+     * @param nums
+     * @return
+     */
+    public int wiggleMaxLength(int[] nums) {
+        if (nums.length <= 1) {
+            return nums.length == 0 ? 0 : 1;
+        }
+
+        int prediff = nums[1] - nums[0];
+        //  =0 则只算一个
+        int reslen = prediff != 0 ? 2 : 1;
+        for (int i = 2; i < nums.length; i++) {
+            int diff = nums[i] - nums[i - 1];
+            if ((diff > 0 && prediff <= 0) || (diff < 0 && prediff >= 0)) {
+                reslen ++;
+                prediff = diff;
+            }
+        }
+        return reslen;
+    }
 }
