@@ -432,4 +432,22 @@ public class ListProblem {
         }
         return reslen;
     }
+
+
+    /**
+     * #217 是否存在重复元素
+     *
+     * @param nums
+     * @return
+     */
+    public boolean containsDuplicate(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>(nums.length);
+        for (int i : nums) {
+            if (map.containsKey(i)) {
+                return true;
+            }
+            map.put(i, 1);
+        }
+        return false;
+    }
 }
