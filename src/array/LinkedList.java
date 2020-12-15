@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * @author zhang.xu
@@ -101,7 +102,7 @@ public class LinkedList {
      * @param nums
      * @return
      */
-    public List<List<Integer>> threeSum(int[] nums) {
+    public List<List<Integer>> threeSum(int[] nums) throws InterruptedException {
         if (nums == null || nums.length < 3) {
             return Collections.emptyList();
         }
@@ -123,6 +124,8 @@ public class LinkedList {
                 if (second > first + 1 && nums[second] == nums[second - 1]) {
                     continue;
                 }
+                Semaphore a = new Semaphore(1);
+                a.acquire();
 
                 while (second < third && nums[second] + nums[third] > target) {
                     third--;
