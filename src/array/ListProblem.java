@@ -450,4 +450,53 @@ public class ListProblem {
         }
         return false;
     }
+
+    /** 买卖股票的最佳时机含手续费
+     *给定一个整数数组 prices，其中第 i 个元素代表了第 i 天的股票价格 ；非负整数 fee 代表了交易股票的手续费用。
+     *
+     * 你可以无限次地完成交易，但是你每笔交易都需要付手续费。如果你已经购买了一个股票，在卖出它之前你就不能再继续购买股票了。
+     *
+     * 返回获得利润的最大值。
+     *
+     * 输入: prices = [1, 3, 2, 8, 4, 9], fee = 2
+     * 输出: 8
+     * 解释: 能够达到的最大利润:
+     * 在此处买入 prices[0] = 1
+     * 在此处卖出 prices[3] = 8
+     * 在此处买入 prices[4] = 4
+     * 在此处卖出 prices[5] = 9
+     * 总利润: ((8 - 1) - 2) + ((9 - 4) - 2) = 8.
+     * @param prices
+     * @param fee
+     * @return
+     */
+    public int maxProfitWithFee(int[] prices, int fee) {
+        int cash = 0, hold = -prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            cash = Math.max(cash, hold + prices[i] - fee);
+            hold = Math.max(hold, cash - prices[i]);
+        }
+        return cash;
+    }
+
+
+    /**数组的每个索引作为一个阶梯，第 i个阶梯对应着一个非负数的体力花费值 cost[i](索引从0开始)。
+
+     每当你爬上一个阶梯你都要花费对应的体力花费值，然后你可以选择继续爬一个阶梯或者爬两个阶梯。
+     *输入: cost = [10, 15, 20]
+     * 输出: 15
+     * 解释: 最低花费是从cost[1]开始，然后走两步即可到阶梯顶，一共花费15。
+     * 输入: cost = [1, 100, 1, 1, 1, 100, 1, 1, 100, 1]
+     * 输出: 6
+     * 解释: 最低花费方式是从cost[0]开始，逐个经过那些1，跳过cost[3]，一共花费6。
+     *
+     * @param cost
+     * @return
+     */
+    public int minCostClimbingStairs(int[] cost) {
+        for (int i = 2; i < cost.length; i++) {
+            cost[i] = Math.min(cost[i - 2], cost[i - 1]) + cost[i];
+        }
+        return Math.min(cost[cost.length - 2], cost[cost.length - 1]);
+    }
 }
