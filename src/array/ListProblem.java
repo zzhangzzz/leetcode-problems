@@ -494,6 +494,7 @@ public class ListProblem {
      * @return
      */
     public int minCostClimbingStairs(int[] cost) {
+        // 动态规划
         for (int i = 2; i < cost.length; i++) {
             cost[i] = Math.min(cost[i - 2], cost[i - 1]) + cost[i];
         }
